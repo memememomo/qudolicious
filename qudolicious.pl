@@ -17,7 +17,6 @@ app->helper(
     }
 );
 
-
 get '/' => 'index';
 
 get '/info/databases' => sub {
@@ -28,19 +27,19 @@ get '/info/databases' => sub {
 
 get '/info/job_count' => sub {
     my $self = shift;
-    $self->stash->{job_count} = $self->qudo->job_count;
+    $self->stash->{job_count} = $self->qudo->job_count();
     $self->render();
 } => 'info/job_count';
 
 get '/info/job_status' => sub {
     my $self = shift;
-    $self->stash->{job_status_list} = $self->qudo->job_status_list;
+    $self->stash->{job_status_list} = $self->qudo->job_status_list();
     $self->render();
 } => 'info/job_status';
 
 get '/info/exceptions' => sub {
     my $self = shift;
-    $self->stash->{exception_list} = $self->qudo->exception_list;
+    $self->stash->{exception_list} = $self->qudo->exception_list();
     $self->render();
 } => 'info/exceptions';
 
@@ -93,9 +92,28 @@ __DATA__
 % layout 'wrapper';
 <% for my $dsn ( keys %{ $exception_list } ) { %>
      <%= $dsn %><br />
+     <table>
+         <tr>
+             <th>id</th>
+             <th>func_id</th>
+             <th>exception_time</th>
+             <th>message</th>
+             <th>uniquekey</th>
+             <th>arg</th>
+             <th>retried</th>
+         </tr>
      <% for my $exception ( @{ $exception_list->{$dsn} } ) { %>
-          <%= $exception->{id} %><br />
+         <tr>
+             <td><%= $exception->{id} %></td>
+             <td><%= $exception->{func_id} %></td>
+             <td><%= $exception->{exception_time} %></td>
+             <td><%= $exception->{message} %></td>
+             <td><%= $exception->{uniqkey} %></td>
+             <td><%= $exception->{arg} %></td>
+             <td><%= $exception->{retried} %></td>
+          </tr>
      <% } %>
+     </table>
 <% } %>
 
 
@@ -111,10 +129,26 @@ __DATA__
 % layout 'wrapper';
 <% for my $dsn ( keys %{ $job_status_list } ) { %>
      <%= $dsn %><br />
+     <table>
+         <tr>
+           <th>ID</th>
+           <th>func_id</th>
+           <th>arg</th>
+           <th>uniqkey</th>
+           <th>status</th>
+           <th>job_start_time</th>
+           <th>job_end_time</th>
+         </tr>
      <% for my $w ( @{ $job_status_list->{$dsn} } ) { %>
-         <%= $w->{id} %><br />
+         <tr>
+           <td><%= $w->{id} %></td>
+           <td><%= $w->{func_id} %></td>
+           <td><%= $w->{arg} %></td>
+           <td><%= $w->{uniqkey} %></td>
+           <td><%= $w->{status} %></td>
+           <td><%= $w->{job_start_time} %></td>
+           <td><%= $w->{job_end_time} %></td>
+         </tr>
      <% } %>
-     <br />
+     </table>
 <% } %>
-
-
